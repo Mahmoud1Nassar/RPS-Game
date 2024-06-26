@@ -1,50 +1,54 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace RPS_Game
 {
-    internal class RPSGame
+    public class RPSGame
     {
-        public static void PlayerVSComputer() {
-            Console.WriteLine("Welcome to our game RPS you need to choose between (rock, paper, scissor)");
-            Player.playerData();
-           
-            int playerScore = 0, AiScore = 0, rounds = 3;
-            do
+        public Player Player { get; private set; }
+        public Player AI { get; private set; }
+        public int Rounds { get; private set; } = 3;
+
+        public RPSGame(Player player, Player ai)
+        {
+            Player = player;
+            AI = ai;
+        }
+
+        public void PlayerVSComputer(Func<string> computerMoveProvider)
+        {
+            while (Rounds > 0)
             {
-                string AiMove = Player.computerMove();
+                string aiMove = computerMoveProvider();
                 string playerMove = Player.RPSPlayer();
 
-                if ((AiMove == "rock" && playerMove == "scissor")
-                        || (AiMove == "paper" && playerMove == "rock")
-                            || (AiMove == "scissor" && playerMove == "paper")) {
-                    AiScore++;
-                    rounds--;
-                    Console.WriteLine($"Ai Won this Round with {AiMove}" );
-                }
-                 else if ((playerMove == "rock" && AiMove == "scissor") 
-                    || (playerMove == "paper" && AiMove == "rock") 
-                        || (playerMove == "scissor" && AiMove == "paper"))
+                if ((aiMove == "rock" && playerMove == "scissor")
+                        || (aiMove == "paper" && playerMove == "rock")
+                            || (aiMove == "scissor" && playerMove == "paper"))
                 {
-                    playerScore++;
-                    rounds--;
-                    Console.WriteLine($"You Won this Round with {playerMove}");
+                    AI.Score++;
+                    Console.WriteLine($"AI won this round with {aiMove}");
+                }
+                else if ((playerMove == "rock" && aiMove == "scissor")
+                        || (playerMove == "paper" && aiMove == "rock")
+                        || (playerMove == "scissor" && aiMove == "paper"))
+                {
+                    Player.Score++;
+                    Console.WriteLine($"You won this round with {playerMove}");
                 }
                 else
                 {
-                    Console.WriteLine("This Round is Tie");
-                    rounds--;
+                    Console.WriteLine("This round is a tie.");
                 }
 
-            } while (rounds != 0);
+                Rounds--;
+            }
 
-            if (AiScore > playerScore) Console.WriteLine("Ai Won the Game");
-            else if (playerScore > AiScore) Console.WriteLine("You Won this Game");
-            else Console.WriteLine("This game is Tie");
+            if (AI.Score > Player.Score)
+                Console.WriteLine("AI won the game!");
+            else if (Player.Score > AI.Score)
+                Console.WriteLine("You won the game!");
+            else
+                Console.WriteLine("The game is a tie.");
         }
     }
 }
